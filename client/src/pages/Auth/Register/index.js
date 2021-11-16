@@ -3,13 +3,14 @@ import {Container, Card, Form, Button, Spinner} from 'react-bootstrap';
 import {useDispatch, useSelector} from 'react-redux';
 import { useNavigate } from 'react-router';
 import Status from '../../../constants/status';
-import { registerAction } from '../../../store/slices/authSlice';
+import { clearStatus, registerAction } from '../../../store/slices/authSlice';
+import { toast } from 'react-hot-toast';
 
 const Register = () => {
     
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const {status, error} = useSelector(state=>state.auth);
+    const {status, error, isLoggedIn} = useSelector(state=>state.auth);
 
     const initialState = {
         firstname: '',
@@ -55,12 +56,21 @@ const Register = () => {
 
     useEffect(()=>{
         if(status === Status.ERROR){
-            console.log('here is error', error)
+            toast.error(error || 'Something went wrong.')
         }else if(status===Status.SUCCESS){
             setUserDetail(initialState);
+            toast.success('User registered successfully.');
+            // TODO: Clear status to IDLE
+            dispatch(clearStatus())
             navigate('/login');
         }
     }, [status])
+
+    useEffect(()=>{
+        if(isLoggedIn){
+            navigate('/')
+        }
+    }, [isLoggedIn])
 
     return (
         <Container className='mt-4 d-flex justify-content-center'>

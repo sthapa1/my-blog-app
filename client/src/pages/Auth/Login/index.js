@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
-import {Container, Card, Form, Button} from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import {Container, Card, Form, Button, Spinner} from 'react-bootstrap';
+import toast from 'react-hot-toast';
+import {useDispatch, useSelector} from 'react-redux';
+import { useNavigate } from 'react-router';
+
+import Status from '../../../constants/status';
+import { clearStatus, loginAction } from '../../../store/slices/authSlice';
+
 
 const Login = () => {
 
@@ -10,6 +17,10 @@ const Login = () => {
 
     const [userDetail, setUserDetail] = useState(initialState);
     const [errors, setErrors] = useState({});
+
+    const {status, error, isLoggedIn} = useSelector(state=>state.auth);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleInputChange = (e) => {
         setUserDetail({
@@ -35,10 +46,29 @@ const Login = () => {
             setErrors(error);
         }else{
             setErrors({});
-            console.log(userDetail);
+            dispatch(loginAction(userDetail))
         }
 
     }
+
+    useEffect(()=>{
+        if(status === Status.ERROR){
+            toast.error(error || 'Something went wrong.')
+        }else if(status===Status.SUCCESS){
+            setUserDetail(initialState);
+            toast.success('Logged in.');
+            // TODO: Clear status to IDLE
+            dispatch(clearStatus())
+            navigate('/');
+        }
+    }, [status])
+
+    useEffect(()=>{
+        if(isLoggedIn){
+            navigate('/')
+        }
+    }, [isLoggedIn])
+
 
     return (
         <Container className='mt-4 d-flex justify-content-center'>
@@ -64,7 +94,9 @@ const Login = () => {
                         </Form.Text>}
                     </Form.Group>
                     
-                    <Button type='submit' variant='primary'>Login</Button>
+                    <Button type='submit' variant='primary'>
+                        {status === Status.PENDING ? <Spinner size='sm' animation='border'></Spinner> : 'Login'}
+                    </Button>
                 </Form>
 
             </Card>

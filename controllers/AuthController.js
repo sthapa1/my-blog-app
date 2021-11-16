@@ -28,7 +28,7 @@ class AuthController {
             });
             res.status(201).json(user);
         } catch (error) {
-            res.status(500).json({error: 'Something went wrong.'})
+            res.status(500).json({message: 'Something went wrong.'})
         }
 
     }
@@ -58,7 +58,7 @@ class AuthController {
         // Generate
         const token = jwt.sign({user_id: user._id, email: user.email}, process.env.JWT_SECRET_KEY, {expiresIn: '24h'});
 
-        res.status(200).json({token});        
+        res.status(200).json({token, user_id: user._id});        
 
     }
 }
