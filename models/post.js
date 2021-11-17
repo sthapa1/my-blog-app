@@ -14,13 +14,11 @@ const postSchema = new mongoose.Schema({
     image: {
         type: String
     },
-    category: [
-        {
-            required: true,
-            type: String,
-            enum: ['Entertainment', 'Design', 'Programming', 'Photography', 'Technology', 'Automobiles', 'Food']
-        }
-    ],
+    category: {
+        required: true,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category'
+    },
     creator: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
@@ -30,7 +28,19 @@ const postSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User' 
         }
-    ] 
+    ] ,
+    dislikes: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User' 
+        }
+    ],
+    comments: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Comment' 
+        }
+    ]
    
 }, {timestamps: true});
 
