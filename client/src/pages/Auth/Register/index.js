@@ -31,6 +31,15 @@ const Register = () => {
         })
     }
 
+    const handleFileChange = (e) => {
+        setUserDetail({
+            ...userDetail,
+            [e.target.name]: e.target.files[0]
+        })
+    }
+
+    console.log(userDetail)
+
     const handleFormSubmit = (e) => {
         e.preventDefault();
         
@@ -48,7 +57,12 @@ const Register = () => {
             setErrors(error);
         }else{
             setErrors({});
-            const {confirmPassword, ...payload} = userDetail;
+            const payload = new FormData();
+            payload.append('firstname', userDetail.firstname);
+            payload.append('lastname', userDetail.lastname);
+            payload.append('email', userDetail.email);
+            payload.append('password', userDetail.password);
+            payload.append('profilePic', userDetail.profilePic);
             dispatch(registerAction(payload));
         }
 
@@ -78,7 +92,7 @@ const Register = () => {
                 <h3 className='text-muted'>Register</h3>
                 <hr />
                 
-                <Form onSubmit={handleFormSubmit}>
+                <Form onSubmit={handleFormSubmit} encType='multipart/form-data'>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>First Name</Form.Label>
                         <Form.Control type="text" name='firstname' placeholder="Enter your first name." value={userDetail.firstname} onChange={handleInputChange} />
@@ -112,7 +126,7 @@ const Register = () => {
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formFile">
                         <Form.Label>Upload Profile</Form.Label>
-                        <Form.Control type="file" name='profilePic' />
+                        <Form.Control type="file" onChange={handleFileChange} name='profilePic' />
                         {/* <Form.Text className="text-muted">
                         We'll never share your email with anyone else.
                         </Form.Text> */}

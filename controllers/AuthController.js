@@ -7,6 +7,7 @@ class AuthController {
     async register(req, res){
         try {
             const {firstname, lastname, email, password} = req.body;
+            const profilePic = req.file.path;
 
             // Check for email and password validation
             if(!(email && password)){
@@ -24,7 +25,7 @@ class AuthController {
             const encryptedPassword = await bcrypt.hash(password, 10);
             // register user
             const user= await User.create({
-                email, password: encryptedPassword, firstname, lastname
+                email, password: encryptedPassword, firstname, lastname, profilePic
             });
             res.status(201).json(user);
         } catch (error) {
