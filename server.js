@@ -6,6 +6,7 @@ const cors = require('cors');
 
 const authRoute = require('./routes/auth');
 const userRoute = require('./routes/user');
+const categoriesRoute = require('./routes/category');
 
 const app = express();
 
@@ -23,6 +24,7 @@ connectDB();
 
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/users', userRoute);
+app.use('/api/v1/categories', categoriesRoute);
 
 app.listen(process.env.PORT, ()=>{
     console.log('Server is running on PORT: ' + process.env.PORT)
