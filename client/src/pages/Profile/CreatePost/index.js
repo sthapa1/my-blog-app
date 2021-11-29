@@ -1,11 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import {Form, Button, Card} from 'react-bootstrap';
 import {useDispatch, useSelector} from 'react-redux';
-import { fetchCategoriesAction } from '../../../store/slices/postSlice';
+import { createPostAction, fetchCategoriesAction } from '../../../store/slices/postSlice';
+import {toast} from 'react-hot-toast';
+import Status from '../../../constants/status';
 const CreatePost = ({closeModal}) => {
 
     const dispatch = useDispatch();
-    const {categories} = useSelector(state=>state.posts)
+    const {categories, status, error} = useSelector(state=>state.posts)
     const initialState = {
         title: '',
         content: '',
@@ -30,14 +32,25 @@ const CreatePost = ({closeModal}) => {
         setPostDetail({...postDetail, [e.target.name]: e.target.value})
     }
 
+    useEffect(()=>{
+        if(status === Status.ERROR){
+            toast.error(error || 'Something went wrong.')
+        }else if(status===Status.SUCCESS){
+            setPostDetail(initialState);
+            toast.success('Post created successfully.');
+            closeModal()
+        }
+    }, [status])
+
     const handleFormSubmit = (e) => {
         e.preventDefault();
+        console.log(postDetail)
         const payload = new FormData();
         payload.append('title', postDetail.title);
         payload.append('content', postDetail.content);
         payload.append('image', postDetail.image);
         payload.append('category', postDetail.category);
-        console.log(postDetail)
+        dispatch(createPostAction(payload))
     }
 
 
@@ -83,7 +96,7 @@ const CreatePost = ({closeModal}) => {
                 </Button>
                 &nbsp;
                 <Button variant="primary" type="submit">
-                    Create Post
+                    { status === Status.PENDING ? 'Creating...' : 'Create Post'}
                 </Button>
             </Card.Footer>
         </Card>

@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
-import API_ROUTES from '../../constants/apiRoutes';
 import Status from '../../constants/status';
+import api from '../../helpers/api';
 
 const sliceName = 'auth';
 
@@ -17,7 +16,7 @@ export const registerAction = createAsyncThunk(
     `${sliceName}/registerAction`,
     async (payload, thunkAPI) => {
         try {
-            const response = await axios.post(`${API_ROUTES.AUTH}/register`, payload);
+            const response = await api.post(`/auth/register`, payload);
             return response.data;
         }catch(error){
             if(!error.response){
@@ -32,7 +31,7 @@ export const loginAction = createAsyncThunk(
     `${sliceName}/loginAction`,
     async (payload, thunkAPI) => {
         try {
-            const response = await axios.post(`${API_ROUTES.AUTH}/login`, payload);
+            const response = await api.post(`/auth/login`, payload);
             return response.data;
         }catch(error){
             if(!error.response){
@@ -46,7 +45,7 @@ export const getLoggedInUser = createAsyncThunk(
     `${sliceName}/getLoggedInUser`,
     async (payload, thunkAPI) => {
         try {
-            const response = await axios.get(`${API_ROUTES.USER}/${payload}`);
+            const response = await api.get(`/users/${payload}`);
             return response.data;
         }catch(error){
             if(!error.response){
